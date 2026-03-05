@@ -7,7 +7,7 @@ import "buf/validate/validate.proto";
 // GetMacroSignalsRequest requests the current macro signal dashboard.
 message GetMacroSignalsRequest {}
 
-// GetMacroSignalsResponse contains the full macro signal dashboard with 7 signals and verdict.
+// GetMacroSignalsResponse contains the full macro signal dashboard with 6 signals and verdict.
 message GetMacroSignalsResponse {
   // ISO 8601 timestamp of computation.
   string timestamp = 1;
@@ -17,7 +17,7 @@ message GetMacroSignalsResponse {
   int32 bullish_count = 3;
   // Total number of evaluated signals (excluding UNKNOWN).
   int32 total_count = 4;
-  // All 7 macro signals.
+  // All 6 macro signals.
   MacroSignals signals = 5;
   // Additional metadata (e.g., QQQ sparkline).
   MacroMeta meta = 6;
@@ -25,7 +25,7 @@ message GetMacroSignalsResponse {
   bool unavailable = 7;
 }
 
-// MacroSignals contains all 7 individual signal computations.
+// MacroSignals contains all 6 individual signal computations.
 message MacroSignals {
   // JPY-based liquidity squeeze detection.
   LiquiditySignal liquidity = 1;
@@ -35,8 +35,6 @@ message MacroSignals {
   MacroRegimeSignal macro_regime = 3;
   // BTC price vs moving averages and VWAP.
   TechnicalTrendSignal technical_trend = 4;
-  // Bitcoin mining hash rate momentum.
-  HashRateSignal hash_rate = 5;
   // Price momentum via Mayer Multiple.
   PriceMomentumSignal price_momentum = 6;
   // Crypto Fear & Greed index.
@@ -91,13 +89,6 @@ message TechnicalTrendSignal {
   repeated double sparkline = 7;
 }
 
-// HashRateSignal tracks Bitcoin hash rate momentum.
-message HashRateSignal {
-  // "GROWING", "DECLINING", "STABLE", or "UNKNOWN".
-  string status = 1;
-  // Hash rate change over 30 days as percentage.
-  optional double change_30d = 2;
-}
 
 // PriceMomentumSignal uses the Mayer Multiple (price/SMA200) as a market-adaptive signal.
 message PriceMomentumSignal {

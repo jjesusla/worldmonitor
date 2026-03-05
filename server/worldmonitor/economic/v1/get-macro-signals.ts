@@ -1,5 +1,5 @@
 /**
- * RPC: getMacroSignals -- 7-signal macro dashboard
+ * RPC: getMacroSignals -- 6-signal macro dashboard
  * Port from api/macro-signals.js
  * Sources: Yahoo Finance, Alternative.me, Mempool
  * In-memory cache with 5-minute TTL.
@@ -39,7 +39,6 @@ function buildFallbackResult(): GetMacroSignalsResponse {
       flowStructure: { status: 'UNKNOWN' },
       macroRegime: { status: 'UNKNOWN' },
       technicalTrend: { status: 'UNKNOWN', sparkline: [] },
-      hashRate: { status: 'UNKNOWN' },
       priceMomentum: { status: 'UNKNOWN' },
       fearGreed: { status: 'UNKNOWN', history: [] },
     },
@@ -57,9 +56,8 @@ async function computeMacroSignals(): Promise<GetMacroSignalsResponse> {
   const qqqChart = await fetchJSON(`${yahooBase}/QQQ?range=1y&interval=1d`).catch(() => null);
   const xlpChart = await fetchJSON(`${yahooBase}/XLP?range=1y&interval=1d`).catch(() => null);
   // Non-Yahoo calls can go in parallel
-  const [fearGreed, mempoolHash] = await Promise.allSettled([
+  const [fearGreed] = await Promise.allSettled([
     fetchJSON('https://api.alternative.me/fng/?limit=30&format=json'),
-    fetchJSON('https://mempool.space/api/v1/mining/hashrate/1m'),
   ]);
 
   const jpyPrices = jpyChart ? extractClosePrices(jpyChart) : [];
@@ -122,20 +120,6 @@ async function computeMacroSignals(): Promise<GetMacroSignalsResponse> {
     mayerMultiple = +(btcCurrent / btcSma200).toFixed(2);
   }
 
-  // 5. Hash Rate
-  let hashStatus = 'UNKNOWN';
-  let hashChange: number | null = null;
-  if (mempoolHash.status === 'fulfilled') {
-    const hr = mempoolHash.value?.hashrates || mempoolHash.value;
-    if (Array.isArray(hr) && hr.length >= 2) {
-      const recent = hr[hr.length - 1]?.avgHashrate || hr[hr.length - 1];
-      const older = hr[0]?.avgHashrate || hr[0];
-      if (recent && older && older > 0) {
-        hashChange = +((recent - older) / older * 100).toFixed(1);
-        hashStatus = hashChange > 3 ? 'GROWING' : hashChange < -3 ? 'DECLINING' : 'STABLE';
-      }
-    }
-  }
 
   // 6. Price Momentum (Mayer Multiple)
   let momentumStatus = 'UNKNOWN';
@@ -171,7 +155,6 @@ async function computeMacroSignals(): Promise<GetMacroSignalsResponse> {
     { name: 'Flow Structure', status: flowStatus, bullish: flowStatus === 'ALIGNED' },
     { name: 'Macro Regime', status: regimeStatus, bullish: regimeStatus === 'RISK-ON' },
     { name: 'Technical Trend', status: trendStatus, bullish: trendStatus === 'BULLISH' },
-    { name: 'Hash Rate', status: hashStatus, bullish: hashStatus === 'GROWING' },
     { name: 'Price Momentum', status: momentumStatus, bullish: momentumStatus === 'STRONG' },
     { name: 'Fear & Greed', status: fgLabel, bullish: fgValue !== undefined && fgValue > 50 },
   ];
@@ -214,10 +197,6 @@ async function computeMacroSignals(): Promise<GetMacroSignalsResponse> {
         vwap30d: btcVwap ?? undefined,
         mayerMultiple: mayerMultiple ?? undefined,
         sparkline: btcSparkline,
-      },
-      hashRate: {
-        status: hashStatus,
-        change30d: hashChange ?? undefined,
       },
       priceMomentum: { status: momentumStatus },
       fearGreed: {

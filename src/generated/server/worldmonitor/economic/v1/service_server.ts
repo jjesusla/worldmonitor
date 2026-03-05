@@ -86,7 +86,6 @@ export interface MacroSignals {
   flowStructure?: FlowStructureSignal;
   macroRegime?: MacroRegimeSignal;
   technicalTrend?: TechnicalTrendSignal;
-  hashRate?: HashRateSignal;
   priceMomentum?: PriceMomentumSignal;
   fearGreed?: FearGreedSignal;
 }
@@ -119,10 +118,6 @@ export interface TechnicalTrendSignal {
   sparkline: number[];
 }
 
-export interface HashRateSignal {
-  status: string;
-  change30d?: number;
-}
 
 export interface PriceMomentumSignal {
   status: string;

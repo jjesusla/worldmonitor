@@ -15,7 +15,6 @@ interface MacroSignalData {
     flowStructure: { status: string; btcReturn5: number | null; qqqReturn5: number | null };
     macroRegime: { status: string; qqqRoc20: number | null; xlpRoc20: number | null };
     technicalTrend: { status: string; btcPrice: number | null; sma50: number | null; sma200: number | null; vwap30d: number | null; mayerMultiple: number | null; sparkline: number[] };
-    hashRate: { status: string; change30d: number | null };
     priceMomentum: { status: string };
     fearGreed: { status: string; value: number | null; history: Array<{ value: number; date: string }> };
   };
@@ -57,10 +56,6 @@ function mapProtoToData(r: GetMacroSignalsResponse): MacroSignalData {
         vwap30d: s?.technicalTrend?.vwap30d ?? null,
         mayerMultiple: s?.technicalTrend?.mayerMultiple ?? null,
         sparkline: s?.technicalTrend?.sparkline ?? [],
-      },
-      hashRate: {
-        status: s?.hashRate?.status ?? 'UNKNOWN',
-        change30d: s?.hashRate?.change30d ?? null,
       },
       priceMomentum: {
         status: s?.priceMomentum?.status ?? 'UNKNOWN',
@@ -108,8 +103,8 @@ function donutGaugeSvg(value: number | null, size = 48): string {
 
 function statusBadgeClass(status: string): string {
   const s = status.toUpperCase();
-  if (['BULLISH', 'RISK-ON', 'GROWING', 'PROFITABLE', 'ALIGNED', 'NORMAL', 'EXTREME GREED', 'GREED'].includes(s)) return 'badge-bullish';
-  if (['BEARISH', 'DEFENSIVE', 'DECLINING', 'SQUEEZE', 'PASSIVE GAP', 'EXTREME FEAR', 'FEAR'].includes(s)) return 'badge-bearish';
+  if (['BULLISH', 'RISK-ON', 'PROFITABLE', 'ALIGNED', 'NORMAL', 'EXTREME GREED', 'GREED'].includes(s)) return 'badge-bullish';
+  if (['BEARISH', 'DEFENSIVE', 'SQUEEZE', 'PASSIVE GAP', 'EXTREME FEAR', 'FEAR'].includes(s)) return 'badge-bearish';
   return 'badge-neutral';
 }
 
@@ -209,7 +204,6 @@ export class MacroSignalsPanel extends Panel {
           ${this.renderSignalCard(t('components.macroSignals.signals.flow'), s.flowStructure.status, `BTC ${formatNum(s.flowStructure.btcReturn5)} / QQQ ${formatNum(s.flowStructure.qqqReturn5)}`, '', '5d returns', null)}
           ${this.renderSignalCard(t('components.macroSignals.signals.regime'), s.macroRegime.status, `QQQ ${formatNum(s.macroRegime.qqqRoc20)} / XLP ${formatNum(s.macroRegime.xlpRoc20)}`, sparklineSvg(d.meta.qqqSparkline, 60, 20, '#ab47bc'), '20d ROC', 'https://www.tradingview.com/symbols/QQQ/')}
           ${this.renderSignalCard(t('components.macroSignals.signals.btcTrend'), s.technicalTrend.status, `$${s.technicalTrend.btcPrice?.toLocaleString() ?? 'N/A'}`, sparklineSvg(s.technicalTrend.sparkline, 60, 20, '#ff9800'), `SMA50: $${s.technicalTrend.sma50?.toLocaleString() ?? '-'} | VWAP: $${s.technicalTrend.vwap30d?.toLocaleString() ?? '-'} | Mayer: ${s.technicalTrend.mayerMultiple ?? '-'}`, 'https://www.tradingview.com/symbols/BTCUSD/')}
-          ${this.renderSignalCard(t('components.macroSignals.signals.hashRate'), s.hashRate.status, formatNum(s.hashRate.change30d), '', '30d change', 'https://mempool.space/mining')}
           ${this.renderSignalCard(t('components.macroSignals.signals.momentum'), s.priceMomentum.status, '', '', 'Mayer Multiple', null)}
           ${this.renderFearGreedCard(s.fearGreed)}
         </div>
