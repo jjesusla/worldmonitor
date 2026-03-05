@@ -1,7 +1,7 @@
 import type { MapLayers } from '@/types';
 
 export type MapRenderer = 'flat' | 'globe';
-export type MapVariant = 'full' | 'tech' | 'finance' | 'happy';
+export type MapVariant = 'full' | 'tech' | 'finance' | 'happy' | 'agro';
 
 export interface LayerDefinition {
   key: keyof MapLayers;
@@ -66,6 +66,12 @@ export const LAYER_REGISTRY: Record<keyof MapLayers, LayerDefinition> = {
   happiness:                def('happiness',                '&#128522;', 'happiness',                'World Happiness'),
   speciesRecovery:          def('speciesRecovery',          '&#128062;', 'speciesRecovery',          'Species Recovery'),
   renewableInstallations:   def('renewableInstallations',   '&#9889;',   'renewableInstallations',   'Clean Energy'),
+  // Agro variant layers
+  cropStress:               def('cropStress',               '&#127807;', 'cropStress',               'Crop Stress Zones'),
+  agroFires:                def('agroFires',                '&#128293;', 'agroFires',                'Agro Fire Damage'),
+  locusts:                  def('locusts',                  '&#128027;', 'locusts',                  'Locust Watch'),
+  foodPorts:                def('foodPorts',                '&#9875;',   'foodPorts',                'Grain Export Ports'),
+  agroMarkets:              def('agroMarkets',              '&#128200;', 'agroMarkets',              'Agro Exchanges'),
 };
 
 const VARIANT_LAYER_ORDER: Record<MapVariant, Array<keyof MapLayers>> = {
@@ -93,6 +99,10 @@ const VARIANT_LAYER_ORDER: Record<MapVariant, Array<keyof MapLayers>> = {
   happy: [
     'positiveEvents', 'kindness', 'happiness',
     'speciesRecovery', 'renewableInstallations',
+  ],
+  agro: [
+    'cropStress', 'agroFires', 'locusts', 'foodPorts', 'agroMarkets',
+    'weather', 'climate', 'natural', 'fires', 'ais', 'tradeRoutes', 'dayNight',
   ],
 };
 

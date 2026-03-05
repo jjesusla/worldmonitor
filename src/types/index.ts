@@ -1,4 +1,4 @@
-export interface DeductContextDetail {
+﻿export interface DeductContextDetail {
   query?: string;
   geoContext: string;
   autoSubmit?: boolean;
@@ -557,6 +557,12 @@ export interface MapLayers {
   ciiChoropleth: boolean;
   // Overlay layers
   dayNight: boolean;
+  // Agro variant layers
+  cropStress: boolean;
+  agroFires: boolean;
+  locusts: boolean;
+  foodPorts: boolean;
+  agroMarkets: boolean;
 }
 
 export interface AIDataCenter {

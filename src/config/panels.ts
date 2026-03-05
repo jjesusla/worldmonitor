@@ -109,6 +109,12 @@ const FULL_MAP_LAYERS: MapLayers = {
   tradeRoutes: false,
   ciiChoropleth: false,
   dayNight: false,
+  // Agro variant layers (disabled in non-agro variants)
+  cropStress: false,
+  agroFires: false,
+  locusts: false,
+  foodPorts: false,
+  agroMarkets: false,
 };
 
 const FULL_MOBILE_MAP_LAYERS: MapLayers = {
@@ -162,6 +168,12 @@ const FULL_MOBILE_MAP_LAYERS: MapLayers = {
   tradeRoutes: false,
   ciiChoropleth: false,
   dayNight: false,
+  // Agro variant layers (disabled in non-agro variants)
+  cropStress: false,
+  agroFires: false,
+  locusts: false,
+  foodPorts: false,
+  agroMarkets: false,
 };
 
 // ============================================
@@ -257,6 +269,12 @@ const TECH_MAP_LAYERS: MapLayers = {
   iranAttacks: false,
   ciiChoropleth: false,
   dayNight: false,
+  // Agro variant layers (disabled in non-agro variants)
+  cropStress: false,
+  agroFires: false,
+  locusts: false,
+  foodPorts: false,
+  agroMarkets: false,
 };
 
 const TECH_MOBILE_MAP_LAYERS: MapLayers = {
@@ -310,6 +328,12 @@ const TECH_MOBILE_MAP_LAYERS: MapLayers = {
   iranAttacks: false,
   ciiChoropleth: false,
   dayNight: false,
+  // Agro variant layers (disabled in non-agro variants)
+  cropStress: false,
+  agroFires: false,
+  locusts: false,
+  foodPorts: false,
+  agroMarkets: false,
 };
 
 // ============================================
@@ -403,6 +427,12 @@ const FINANCE_MAP_LAYERS: MapLayers = {
   iranAttacks: false,
   ciiChoropleth: false,
   dayNight: false,
+  // Agro variant layers (disabled in non-agro variants)
+  cropStress: false,
+  agroFires: false,
+  locusts: false,
+  foodPorts: false,
+  agroMarkets: false,
 };
 
 const FINANCE_MOBILE_MAP_LAYERS: MapLayers = {
@@ -456,6 +486,12 @@ const FINANCE_MOBILE_MAP_LAYERS: MapLayers = {
   iranAttacks: false,
   ciiChoropleth: false,
   dayNight: false,
+  // Agro variant layers (disabled in non-agro variants)
+  cropStress: false,
+  agroFires: false,
+  locusts: false,
+  foodPorts: false,
+  agroMarkets: false,
 };
 
 // ============================================
@@ -525,6 +561,12 @@ const HAPPY_MAP_LAYERS: MapLayers = {
   iranAttacks: false,
   ciiChoropleth: false,
   dayNight: false,
+  // Agro variant layers (disabled in non-agro variants)
+  cropStress: false,
+  agroFires: false,
+  locusts: false,
+  foodPorts: false,
+  agroMarkets: false,
 };
 
 const HAPPY_MOBILE_MAP_LAYERS: MapLayers = {
@@ -578,14 +620,148 @@ const HAPPY_MOBILE_MAP_LAYERS: MapLayers = {
   iranAttacks: false,
   ciiChoropleth: false,
   dayNight: false,
+  // Agro variant layers (disabled in non-agro variants)
+  cropStress: false,
+  agroFires: false,
+  locusts: false,
+  foodPorts: false,
+  agroMarkets: false,
 };
+
+// ============================================
+// AGRO VARIANT (Agricultural Intelligence)
+// ============================================
+const AGRO_PANELS:Record<string,PanelConfig>={
+map:{name:'Global Agro Map',enabled:true,priority:1},
+'live-news':{name:'Agro Headlines',enabled:true,priority:1},
+insights:{name:'AI Agro Insights',enabled:true,priority:1},
+crops:{name:'Crop & Harvest News',enabled:true,priority:1},
+commodityMarkets:{name:'Commodity Markets',enabled:true,priority:1},
+foodSecurity:{name:'Food Security',enabled:true,priority:1},
+tradePolicy:{name:'Trade & Export Policy',enabled:true,priority:1},
+weather:{name:'Crop Weather',enabled:true,priority:1},
+'satellite-fires':{name:'Crop Fire Monitor',enabled:true,priority:1},
+supplyChain:{name:'Ag Supply Chain',enabled:true,priority:1},
+regional:{name:'Regional Markets',enabled:true,priority:1},
+climate:{name:'Climate Anomalies',enabled:true,priority:2},
+'macro-signals':{name:'Market Radar',enabled:true,priority:2},
+markets:{name:'Broader Markets',enabled:true,priority:2},
+polymarket:{name:'Predictions',enabled:true,priority:2},
+monitors:{name:'My Monitors',enabled:true,priority:2}};
+
+const AGRO_MAP_LAYERS:MapLayers={
+  gpsJamming:false,
+  conflicts:false,
+  bases:false,
+  cables:false,
+  pipelines:true,
+  hotspots:false,
+  ais:true,
+  nuclear:false,
+  irradiators:false,
+  sanctions:false,
+  weather:true,
+  economic:false,
+  waterways:true,
+  outages:false,
+  cyberThreats:false,
+  datacenters:false,
+  protests:false,
+  flights:false,
+  military:false,
+  natural:true,
+  spaceports:false,
+  minerals:false,
+  fires:true,
+  ucdpEvents:false,
+  displacement:false,
+  climate:true,
+  startupHubs:false,
+  cloudRegions:false,
+  accelerators:false,
+  techHQs:false,
+  techEvents:false,
+  stockExchanges:false,
+  financialCenters:false,
+  centralBanks:false,
+  commodityHubs:false,
+  gulfInvestments:false,
+  positiveEvents:false,
+  kindness:false,
+  happiness:false,
+  speciesRecovery:false,
+  renewableInstallations:false,
+  tradeRoutes:true,
+  iranAttacks:false,
+  ciiChoropleth:false,
+  dayNight:false,
+  cropStress:true,
+  agroFires:true,
+  locusts:true,
+  foodPorts:true,
+  agroMarkets:true,
+};
+
+const AGRO_MOBILE_MAP_LAYERS:MapLayers={
+  gpsJamming:false,
+  conflicts:false,
+  bases:false,
+  cables:false,
+  pipelines:false,
+  hotspots:false,
+  ais:false,
+  nuclear:false,
+  irradiators:false,
+  sanctions:false,
+  weather:true,
+  economic:false,
+  waterways:false,
+  outages:false,
+  cyberThreats:false,
+  datacenters:false,
+  protests:false,
+  flights:false,
+  military:false,
+  natural:true,
+  spaceports:false,
+  minerals:false,
+  fires:true,
+  ucdpEvents:false,
+  displacement:false,
+  climate:false,
+  startupHubs:false,
+  cloudRegions:false,
+  accelerators:false,
+  techHQs:false,
+  techEvents:false,
+  stockExchanges:false,
+  financialCenters:false,
+  centralBanks:false,
+  commodityHubs:false,
+  gulfInvestments:false,
+  positiveEvents:false,
+  kindness:false,
+  happiness:false,
+  speciesRecovery:false,
+  renewableInstallations:false,
+  tradeRoutes:false,
+  iranAttacks:false,
+  ciiChoropleth:false,
+  dayNight:false,
+  cropStress:true,
+  agroFires:true,
+  locusts:false,
+  foodPorts:true,
+  agroMarkets:false,
+};
+
 
 // ============================================
 // VARIANT-AWARE EXPORTS
 // ============================================
-export const DEFAULT_PANELS = SITE_VARIANT === 'happy' ? HAPPY_PANELS : SITE_VARIANT === 'tech' ? TECH_PANELS : SITE_VARIANT === 'finance' ? FINANCE_PANELS : FULL_PANELS;
-export const DEFAULT_MAP_LAYERS = SITE_VARIANT === 'happy' ? HAPPY_MAP_LAYERS : SITE_VARIANT === 'tech' ? TECH_MAP_LAYERS : SITE_VARIANT === 'finance' ? FINANCE_MAP_LAYERS : FULL_MAP_LAYERS;
-export const MOBILE_DEFAULT_MAP_LAYERS = SITE_VARIANT === 'happy' ? HAPPY_MOBILE_MAP_LAYERS : SITE_VARIANT === 'tech' ? TECH_MOBILE_MAP_LAYERS : SITE_VARIANT === 'finance' ? FINANCE_MOBILE_MAP_LAYERS : FULL_MOBILE_MAP_LAYERS;
+export const DEFAULT_PANELS = SITE_VARIANT === 'agro' ? AGRO_PANELS : SITE_VARIANT === 'happy' ? HAPPY_PANELS : SITE_VARIANT === 'tech' ? TECH_PANELS : SITE_VARIANT === 'finance' ? FINANCE_PANELS : FULL_PANELS;
+export const DEFAULT_MAP_LAYERS = SITE_VARIANT === 'agro' ? AGRO_MAP_LAYERS : SITE_VARIANT === 'happy' ? HAPPY_MAP_LAYERS : SITE_VARIANT === 'tech' ? TECH_MAP_LAYERS : SITE_VARIANT === 'finance' ? FINANCE_MAP_LAYERS : FULL_MAP_LAYERS;
+export const MOBILE_DEFAULT_MAP_LAYERS = SITE_VARIANT === 'agro' ? AGRO_MOBILE_MAP_LAYERS : SITE_VARIANT === 'happy' ? HAPPY_MOBILE_MAP_LAYERS : SITE_VARIANT === 'tech' ? TECH_MOBILE_MAP_LAYERS : SITE_VARIANT === 'finance' ? FINANCE_MOBILE_MAP_LAYERS : FULL_MOBILE_MAP_LAYERS;
 
 /** Maps map-layer toggle keys to their data-freshness source IDs (single source of truth). */
 export const LAYER_TO_SOURCE: Partial<Record<keyof MapLayers, DataSourceId[]>> = {
@@ -701,6 +877,9 @@ export const PANEL_CATEGORY_MAP: Record<string, { labelKey: string; panelKeys: s
     variants: ['finance'],
   },
 };
+  agroData:{labelKey:'header.panelCatAgroData',panelKeys:['crops','commodityMarkets','foodSecurity','tradePolicy','weather'],variants:['agro']},
+  agroIntel:{labelKey:'header.panelCatAgroIntel',panelKeys:['supplyChain','regional','satellite-fires','climate'],variants:['agro']},
+  agroMarketWatch:{labelKey:'header.panelCatAgroMarkets',panelKeys:['markets','macro-signals','polymarket','monitors'],variants:['agro']},
 
 // Monitor palette — fixed category colors persisted to localStorage (not theme-dependent)
 export const MONITOR_COLORS = [

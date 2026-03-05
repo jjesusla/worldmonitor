@@ -74,6 +74,12 @@ function htmlVariantPlugin(): Plugin {
           '<meta name="theme-color" content="#FAFAF5" />'
         );
       }
+      if (activeVariant === 'agro') {
+        result = result.replace(
+          /<meta name='theme-color' content='.*?' />/,
+          '<meta name=theme-color content=#1a3d1f />'
+        );
+      }
 
       // Desktop builds: inject build-time variant into the inline script so data-variant is set
       // before CSS loads. Web builds always use 'full' — runtime hostname detection handles variants.

@@ -336,6 +336,42 @@ function shouldEscalateToCritical(lower: string, matchCat: EventCategory): boole
   return ESCALATION_ACTIONS.test(lower) && ESCALATION_TARGETS.test(lower);
 }
 
+
+const AGRO_HIGH_KEYWORDS: Record<string, EventCategory> = {
+  famine: 'environmental',
+  'crop failure': 'environmental',
+  'harvest failure': 'environmental',
+  'food crisis': 'economic',
+  'food emergency': 'economic',
+  'export ban': 'economic',
+  'grain embargo': 'economic',
+  'locust invasion': 'environmental',
+  'locust swarm': 'environmental',
+  'severe drought': 'environmental',
+  'food shortage': 'economic',
+};
+
+const AGRO_MEDIUM_KEYWORDS: Record<string, EventCategory> = {
+  'crop disease': 'health',
+  'grain deal': 'diplomatic',
+  'food inflation': 'economic',
+  'drought warning': 'environmental',
+  'frost damage': 'environmental',
+  'flood crop': 'disaster',
+  'harvest warning': 'environmental',
+  'fertilizer shortage': 'economic',
+};
+
+const AGRO_LOW_KEYWORDS: Record<string, EventCategory> = {
+  'crop report': 'economic',
+  'harvest forecast': 'economic',
+  'planting season': 'economic',
+  'commodity price': 'economic',
+  'grain price': 'economic',
+  'food production': 'economic',
+  'usda report': 'economic',
+  'fao report': 'economic',
+};
 export function classifyByKeyword(title: string, variant = 'full'): ThreatClassification {
   const lower = title.toLowerCase();
 
@@ -344,6 +380,7 @@ export function classifyByKeyword(title: string, variant = 'full'): ThreatClassi
   }
 
   const isTech = variant === 'tech';
+  const isAgro = variant === 'agro';
 
   // Priority cascade: critical → high → medium → low → info
   let match = matchKeywords(lower, CRITICAL_KEYWORDS);
@@ -376,7 +413,15 @@ export function classifyByKeyword(title: string, variant = 'full'): ThreatClassi
 
   if (isTech) {
     match = matchKeywords(lower, TECH_LOW_KEYWORDS);
+    if (match) return { level: 'low', category: match.category, confidence: 0.55, source: 'keyword' }
+  if (isAgro) {
+    match = matchKeywords(lower, AGRO_HIGH_KEYWORDS);
+    if (match) return { level: 'high', category: match.category, confidence: 0.75, source: 'keyword' };
+    match = matchKeywords(lower, AGRO_MEDIUM_KEYWORDS);
+    if (match) return { level: 'medium', category: match.category, confidence: 0.65, source: 'keyword' };
+    match = matchKeywords(lower, AGRO_LOW_KEYWORDS);
     if (match) return { level: 'low', category: match.category, confidence: 0.55, source: 'keyword' };
+  };
   }
 
   return { level: 'info', category: 'general', confidence: 0.3, source: 'keyword' };

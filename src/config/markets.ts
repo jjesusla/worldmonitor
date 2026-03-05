@@ -63,3 +63,16 @@ export const CRYPTO_MAP: Record<string, { name: string; symbol: string }> = {
   solana: { name: 'Solana', symbol: 'SOL' },
   ripple: { name: 'XRP', symbol: 'XRP' },
 };
+
+export const AGRO_COMMODITIES: Commodity[] = [
+  { symbol: 'ZW=F', name: 'Wheat',         display: 'WHEAT'  },
+  { symbol: 'ZC=F', name: 'Corn',          display: 'CORN'   },
+  { symbol: 'ZS=F', name: 'Soybeans',      display: 'SOY'    },
+  { symbol: 'ZO=F', name: 'Oats',          display: 'OATS'   },
+  { symbol: 'ZR=F', name: 'Rough Rice',    display: 'RICE'   },
+  { symbol: 'KC=F', name: 'Coffee',        display: 'COFFEE' },
+  { symbol: 'SB=F', name: 'Sugar',         display: 'SUGAR'  },
+  { symbol: 'CC=F', name: 'Cocoa',         display: 'COCOA'  },
+  { symbol: 'CT=F', name: 'Cotton',        display: 'COTTON' },
+  { symbol: 'GF=F', name: 'Feeder Cattle', display: 'CATTLE' },
+];
