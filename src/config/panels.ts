@@ -876,10 +876,10 @@ export const PANEL_CATEGORY_MAP: Record<string, { labelKey: string; panelKeys: s
     panelKeys: ['gulf-economies', 'gcc-investments', 'gccNews', 'monitors', 'world-clock'],
     variants: ['finance'],
   },
+  agroData: { labelKey: 'header.panelCatAgroData', panelKeys: ['crops', 'commodityMarkets', 'foodSecurity', 'tradePolicy', 'weather'], variants: ['agro'] },
+  agroIntel: { labelKey: 'header.panelCatAgroIntel', panelKeys: ['supplyChain', 'regional', 'satellite-fires', 'climate'], variants: ['agro'] },
+  agroMarketWatch: { labelKey: 'header.panelCatAgroMarkets', panelKeys: ['markets', 'macro-signals', 'polymarket', 'monitors'], variants: ['agro'] },
 };
-  agroData:{labelKey:'header.panelCatAgroData',panelKeys:['crops','commodityMarkets','foodSecurity','tradePolicy','weather'],variants:['agro']},
-  agroIntel:{labelKey:'header.panelCatAgroIntel',panelKeys:['supplyChain','regional','satellite-fires','climate'],variants:['agro']},
-  agroMarketWatch:{labelKey:'header.panelCatAgroMarkets',panelKeys:['markets','macro-signals','polymarket','monitors'],variants:['agro']},
 
 // Monitor palette — fixed category colors persisted to localStorage (not theme-dependent)
 export const MONITOR_COLORS = [
