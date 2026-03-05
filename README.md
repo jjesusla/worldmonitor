@@ -176,7 +176,6 @@ Two rendering engines are available, switchable at runtime via Settings or the `
 - Stablecoin peg health monitor (USDT, USDC, DAI, FDUSD, USDe)
 - Fear & Greed Index with 30-day history
 - Bitcoin technical trend (SMA50, SMA200, VWAP, Mayer Multiple)
-- JPY liquidity signal, QQQ/XLP macro regime, BTC hash rate
 - Inline SVG sparklines and donut gauges for visual trends
 
 </details>
@@ -1112,7 +1111,6 @@ Markets are filtered to exclude sports and entertainment (100+ exclusion keyword
 
 ### Macro Signal Analysis (Market Radar)
 
-The Market Radar panel computes a composite BUY/CASH verdict from 7 independent signals sourced entirely from free APIs (Yahoo Finance, mempool.space, alternative.me):
 
 | Signal              | Computation                           | Bullish When                |
 | ------------------- | ------------------------------------- | --------------------------- |
@@ -1120,8 +1118,6 @@ The Market Radar panel computes a composite BUY/CASH verdict from 7 independent 
 | **Flow Structure**  | BTC 5-day return vs QQQ 5-day return  | Gap < 5% (aligned)          |
 | **Macro Regime**    | QQQ 20-day ROC vs XLP 20-day ROC      | QQQ outperforming (risk-on) |
 | **Technical Trend** | BTC vs SMA50 + 30-day VWAP            | Above both (bullish)        |
-| **Hash Rate**       | Bitcoin mining hashrate 30-day change | Growing > 3%                |
-| **Mining Cost**     | BTC price vs hashrate-implied cost    | Price > $60K (profitable)   |
 | **Fear & Greed**    | alternative.me sentiment index        | Value > 50                  |
 
 The overall verdict requires ≥57% of known signals to be bullish (BUY), otherwise CASH. Signals with unknown data are excluded from the denominator.
@@ -1528,7 +1524,6 @@ World Monitor uses 60+ Vercel Edge Functions as a lightweight API layer, split i
 
 - **RSS Proxy** — domain-allowlisted proxy for 170+ feeds, preventing CORS issues and hiding origin servers. Feeds from domains that block Vercel IPs are automatically routed through the Railway relay.
 - **AI Pipeline** — Groq and OpenRouter edge functions with Redis deduplication, so identical headlines across concurrent users only trigger one LLM call. The classify-event endpoint pauses its queue on 500 errors to avoid wasting API quota.
-- **Data Adapters** — GDELT, ACLED, OpenSky, USGS, NASA FIRMS, FRED, Yahoo Finance, CoinGecko, mempool.space, BIS, WTO, and others each have dedicated edge functions that normalize responses into consistent schemas
 - **Market Intelligence** — macro signals, ETF flows, and stablecoin monitors compute derived analytics server-side (VWAP, SMA, peg deviation, flow estimates) and cache results in Redis
 - **Temporal Baseline** — Welford's algorithm state is persisted in Redis across requests, building statistical baselines without a traditional database
 - **Custom Scrapers** — sources without RSS feeds (FwdStart, GitHub Trending, tech events) are scraped and transformed into RSS-compatible formats
@@ -1945,7 +1940,6 @@ Set `WS_RELAY_URL` (server-side, HTTPS) and `VITE_WS_RELAY_URL` (client-side, WS
 | **AI/ML**             | Ollama / LM Studio (local, OpenAI-compatible), Groq (Llama 3.1 8B), OpenRouter (fallback), Transformers.js (browser-side T5, NER, embeddings), IndexedDB vector store (5K headline RAG) |
 | **Caching**           | Redis (Upstash) — 3-tier cache with in-memory + Redis + upstream, cross-user AI deduplication. Vercel CDN (s-maxage). Service worker (Workbox) |
 | **Geopolitical APIs** | OpenSky, GDELT, ACLED, UCDP, HAPI, USGS, GDACS, NASA EONET, NASA FIRMS, Polymarket, Cloudflare Radar, WorldPop, OREF (Israel sirens), gpsjam.org (GPS interference), Telegram MTProto (26 OSINT channels) |
-| **Market APIs**       | Yahoo Finance (equities, forex, crypto), CoinGecko (stablecoins), mempool.space (BTC hashrate), alternative.me (Fear & Greed)                  |
 | **Threat Intel APIs** | abuse.ch (Feodo Tracker, URLhaus), AlienVault OTX, AbuseIPDB, C2IntelFeeds                                                                     |
 | **Economic APIs**     | FRED (Federal Reserve), EIA (Energy), Finnhub (stock quotes)                                                                                   |
 | **Localization**      | i18next (21 languages: en, bg, ro, fr, de, es, it, pl, pt, nl, sv, ru, ar, zh, ja, tr, th, vi, cs, el, ko), RTL support, lazy-loaded bundles, native-language feeds for 21 locales with one-time locale boost |

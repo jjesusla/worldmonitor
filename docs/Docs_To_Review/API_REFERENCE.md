@@ -911,7 +911,6 @@ interface MacroSignalsResponse {
 interface MacroSignal {
   name: string;
   // One of: liquidity, flowStructure, macroRegime,
-  //         technicalTrend, hashRate, miningCost, fearGreed
   value: number;
   signal: "BUY" | "CASH" | "NEUTRAL";
   weight: number;
