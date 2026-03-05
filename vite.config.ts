@@ -76,7 +76,7 @@ function htmlVariantPlugin(): Plugin {
       }
       if (activeVariant === 'agro') {
         result = result.replace(
-          /<meta name="theme-color" content=".*?" />/,
+          /<meta name="theme-color" content=".*?" \/>/,
           '<meta name="theme-color" content="#1a3d1f" />'
         );
       }
