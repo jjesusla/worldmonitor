@@ -130,6 +130,11 @@ const layers = {
   iranAttacks: false,
 
   ciiChoropleth: false,
+  cropStress: false,
+  agroFires: false,
+  locusts: false,
+  foodPorts: false,
+  agroMarkets: false,
   dayNight: false,
 };
 

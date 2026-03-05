@@ -181,6 +181,11 @@ const allLayersEnabled: MapLayers = {
   tradeRoutes: true,
   iranAttacks: false,
   ciiChoropleth: false,
+  cropStress: false,
+  agroFires: false,
+  locusts: false,
+  foodPorts: false,
+  agroMarkets: false,
   dayNight: true,
 };
 
@@ -230,6 +235,11 @@ const allLayersDisabled: MapLayers = {
   tradeRoutes: false,
   iranAttacks: false,
   ciiChoropleth: false,
+  cropStress: false,
+  agroFires: false,
+  locusts: false,
+  foodPorts: false,
+  agroMarkets: false,
   dayNight: false,
 };
 
