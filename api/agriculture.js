@@ -1,194 +1,198 @@
 import { cors } from './_cors';
 import { Redis } from '@upstash/redis';
 
+// --- Redis Cache Setup ---
 const redis = new Redis({
   url: process.env.UPSTASH_REDIS_REST_URL,
   token: process.env.UPSTASH_REDIS_REST_TOKEN,
 });
+const CACHE_KEY_AGRICULTURE = 'world-monitor:agriculture-dashboard:v3';
+const CACHE_TTL_SECONDS = 3600; // 1 hour
 
-const CACHE_KEY_AGRICULTURE = 'world-monitor:agriculture:v1';
-const CACHE_TTL_SECONDS = 1800; // 30 minutes
+// --- Data Fetching Functions ---
 
 /**
- * Loads local agricultural production data for Guanajuato.
- * This data is manually curated from SIAP's open data portal.
- * See: https://nube.agricultura.gob.mx/datosAbiertos/Agricola.php
- * The file is expected at ../data/siap-guanajuato.json
- * @returns {Promise<object>}
+ * Loads local context for Guanajuato from a curated JSON file.
+ * This file should be periodically updated based on SECAM bulletins.
  */
-async function getSIAPData() {
-  console.log('Loading local SIAP data...');
+async function getGuanajuatoContext() {
+  console.log('Loading local Guanajuato context...');
   try {
-    // Vercel Edge Functions can't access the file system directly with `fs`.
-    // Instead, we import the JSON file as if it were a module.
-    // This bundles the data with the function at deployment.
-    const siapData = await import('../data/siap-guanajuato.json');
-    return siapData.default;
+    const contextData = await import('../data/guanajuato-context.json');
+    return contextData.default;
   } catch (error) {
-    console.error('Failed to load local SIAP data. Make sure ../data/siap-guanajuato.json exists.', error);
-    return {
-      source: 'SIAP (Local)',
-      error: 'Failed to load local SIAP data file. Please check the server logs.',
-      production_summary: {},
-    };
+    console.error('Failed to load local context data:', error);
+    return { source: "Curated Local Data", error: "Failed to load guanajuato-context.json." };
   }
 }
 
 /**
- * Fetches near-real-time futures prices for corn and wheat from a commodity API.
- * This function requires a valid API key from https://commodities-api.com/.
- * The key should be stored in the COMMODITIES_API_KEY environment variable.
- * @returns {Promise<object>}
+ * [Placeholder] Fetches national grain balance.
+ * Technical Source: GCMA (Grupo Consultor de Mercados Agrícolas) reports.
+ * Implementation: Requires manual parsing of weekly reports or a potential future data feed.
  */
-async function getCMEFutures() {
-  console.log('Fetching CME futures...');
-
-  const apiKey = process.env.COMMODITIES_API_KEY;
-  const symbols = 'CORN,WHEAT';
-  const url = `https://commodities-api.com/api/latest?access_key=${apiKey}&base=USD&symbols=${symbols}`;
-
-  if (!apiKey) {
-    console.warn('COMMODITIES_API_KEY not found. Returning placeholder data for futures.');
-    return {
-      source: 'CME via commodities-api.com (Placeholder - API Key Needed)',
-      lastUpdated: new Date().toISOString(),
-      futures: {
-        corn: {
-          symbol: 'CORN',
-          price_usd_per_unit: null,
-          change: null,
-          error: 'API key not provided.',
-        },
-        wheat: {
-          symbol: 'WHEAT',
-          price_usd_per_unit: null,
-          change: null,
-          error: 'API key not provided.',
-        }
-      }
-    };
-  }
-
-  /*
-  // UNCOMMENT THIS BLOCK AFTER ADDING THE COMMODITIES_API_KEY
-  try {
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`Commodities API request failed with status ${response.status}`);
-    }
-    const data = await response.json();
-
-    if (!data.success) {
-      throw new Error(`Commodities API error: ${data.error?.info}`);
-    }
-
-    const cornPrice = data.data.rates.CORN;
-    const wheatPrice = data.data.rates.WHEAT;
-
-    // The API provides the price relative to the base currency, so 1/price gives the USD price.
-    return {
-      source: 'CME via commodities-api.com',
-      lastUpdated: new Date(data.data.timestamp * 1000).toISOString(),
-      futures: {
-        corn: {
-          symbol: 'CORN',
-          price_usd_per_unit: 1 / cornPrice,
-        },
-        wheat: {
-          symbol: 'WHEAT',
-          price_usd_per_unit: 1 / wheatPrice,
-        }
-      }
-    };
-  } catch (error) {
-    console.error('Failed to fetch CME futures:', error);
-    throw error; // Re-throw to be caught by the main handler
-  }
-  */
-
-  // Returning placeholder data for now as the fetch call is commented out.
+async function getNationalBalance() {
+  console.log('Fetching national balance from GCMA...');
   return {
-    source: 'CME via commodities-api.com (Placeholder - Code ready)',
-    lastUpdated: new Date().toISOString(),
-    futures: {
-      corn: {
-        symbol: 'CORN',
-        price_usd_per_unit: 4.50,
-        note: "This is placeholder data. Uncomment code in getCMEFutures to use API."
-      },
-      wheat: {
-        symbol: 'WHEAT',
-        price_usd_per_unit: 6.20,
-        note: "This is placeholder data. Uncomment code in getCMEFutures to use API."
-      }
+    source: "GCMA (Placeholder)",
+    import_dependency_pct: 49,
+    by_grain: {
+      yellow_corn: { dependency: "high", observation: "Critical for livestock sector" },
+      wheat: { dependency: "high", observation: "Driven by low international prices" },
     }
   };
 }
 
 /**
- * Gathers relevant news by fetching and parsing a specialized RSS feed.
- * @returns {Promise<object>}
+ * [Placeholder] Fetches US export and supply data.
+ * Technical Source: USDA Foreign Agricultural Service (FAS) API.
+ * Implementation: Query the REST API for Export Sales (ESR) and Production/Supply (PSD).
  */
-async function getRegionalNews() {
-  console.log('Fetching regional news...');
-  const feedUrl = 'https://www.hortidaily.es/rss.asp';
-  const maxArticles = 5;
+async function getUSDAGovData() {
+    console.log('Fetching USDA FAS data...');
+    return {
+        source: "USDA FAS API (Placeholder)",
+        latest_export_sales: {
+            corn_tonnes_to_mexico: 250000,
+            report_date: "2026-03-05",
+        },
+        psd_forecast: {
+            world_corn_production_change_pct: -1.5,
+            observation: "Slight decrease due to weather events in North America.",
+        }
+    };
+}
 
-  try {
-    const response = await fetch(feedUrl, {
-      headers: {
-        'User-Agent': 'WorldMonitor-Agriculture-Module/1.0',
-      }
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch RSS feed, status: ${response.status}`);
-    }
-
-    const xmlText = await response.text();
+/**
+ * Fetches international market data (CME Futures and USD/MXN).
+ * Technical Sources: CME Group RSS/API, Trading Economics API for FX.
+ * Implementation: Uses a 3rd party commodity API and a placeholder for FX.
+ */
+async function getInternationalMarkets() {
+    console.log('Fetching international markets...');
+    const apiKey = process.env.COMMODITIES_API_KEY;
+    const symbols = 'CORN,WHEAT,SOYBEAN';
+    const commoditiesUrl = `https://commodities-api.com/api/latest?access_key=${apiKey}&base=USD&symbols=${symbols}`;
     
-    // Basic manual XML parsing to avoid adding dependencies.
-    const articles = [];
-    const items = xmlText.split('<item>');
-    items.shift(); // Remove everything before the first <item>
+    const currencyData = {
+        source: "Trading Economics API (Placeholder)",
+        usd_mxn_rate: 18.55,
+    };
 
-    for (let i = 0; i < items.length && i < maxArticles; i++) {
-      const item = items[i];
-      const titleMatch = item.match(/<title><!\[CDATA\[(.*?)\]\]><\/title>/);
-      const linkMatch = item.match(/<link>(.*?)<\/link>/);
-      const pubDateMatch = item.match(/<pubDate>(.*?)<\/pubDate>/);
-
-      if (titleMatch && linkMatch && pubDateMatch) {
-        articles.push({
-          title: titleMatch[1],
-          link: linkMatch[1],
-          published: new Date(pubDateMatch[1]).toISOString(),
-          source: 'HortiDaily ES',
-        });
-      }
+    if (!apiKey) {
+      return {
+        cme_futures: { source: 'CME (Placeholder - API Key Needed)', data: {} },
+        currency: currencyData,
+      };
     }
 
-    return {
-      source: 'HortiDaily ES RSS',
-      articles,
-    };
+    try {
+        const response = await fetch(commoditiesUrl);
+        const data = await response.json();
+        if (!data.success) throw new Error('Failed to fetch from commodities-api');
 
-  } catch (error) {
-    console.error('Failed to fetch or parse regional news RSS:', error);
-    // Return an empty or error state, but don't block the whole API response
+        return {
+            cme_futures: {
+                source: "commodities-api.com",
+                data: {
+                    corn_usd_per_bushel: 1 / data.data.rates.CORN,
+                    wheat_usd_per_bushel: 1 / data.data.rates.WHEAT,
+                    soy_usd_per_bushel: 1 / data.data.rates.SOYBEAN,
+                }
+            },
+            currency: currencyData,
+        };
+    } catch (error) {
+        console.error("Error fetching int'l market data:", error);
+        return { cme_futures: { source: 'CME (Error)', data: {}, error: error.message }, currency: currencyData };
+    }
+}
+
+/**
+ * [Placeholder] Fetches real-time logistics data.
+ * Technical Source: MarineTraffic or VesselFinder Port Calls API.
+ * Implementation: Requires subscription to a maritime tracking API.
+ */
+async function getLogisticsData() {
+  console.log('Fetching logistics data...');
+  return {
+    source: "MarineTraffic API (Placeholder)",
+    ports: {
+      altamira: { arriving_bulk_carriers: 3, last_arrival_hours_ago: 8 },
+      manzanillo: { arriving_bulk_carriers: 5, last_arrival_hours_ago: 3 },
+    }
+  };
+}
+
+/**
+ * [Placeholder] Fetches agro-input prices.
+ * Technical Sources: SNIIM for national references, Trading Economics API for real-time.
+ */
+async function getAgroInputsData() {
+  console.log('Fetching agro-inputs data...');
+  return {
+    source: "SNIIM / Trading Economics API (Placeholder)",
+    fertilizers: {
+      urea_usd_per_ton: { price: 583.50, change_month_pct: 28.52, change_year_pct: 52.25 },
+    },
+    national_reference_sniim: {
+        tortilla_kg_price_mxn_león: 18.00,
+    }
+  };
+}
+
+/**
+ * [Placeholder] Fetches local climate data.
+ * Technical Source: OpenWeatherMap API for a specific lat/lon in Guanajuato.
+ */
+async function getClimateData() {
+    console.log('Fetching climate data...');
     return {
-      source: 'HortiDaily ES RSS',
-      articles: [],
-      error: 'Failed to retrieve news.',
+        source: "OpenWeatherMap API (Placeholder)",
+        location: "Valle de Santiago, GTO",
+        forecast_5_day: {
+            chance_of_rain_pct: 10,
+            max_temp_celsius: 28,
+        }
     };
-  }
 }
 
 
+/**
+ * Fetches local news from relevant RSS feeds.
+ * Technical Source: CME RSS, local newspapers.
+ */
+async function getSocialPulse() {
+  console.log('Fetching social pulse...');
+  // Using a more relevant feed for market news
+  const feedUrl = 'https://www.cmegroup.com/cme-group-en-feed.rss';
+  try {
+    const response = await fetch(feedUrl);
+    const xmlText = await response.text();
+    const articles = [];
+    const items = xmlText.split('<item>');
+    items.shift(); 
+
+    for (let i = 0; i < Math.min(items.length, 4); i++) {
+        const item = items[i];
+        const titleMatch = item.match(/<title>(.*?)<\/title>/);
+        const linkMatch = item.match(/<link>(.*?)<\/link>/);
+        if (titleMatch && linkMatch) {
+            articles.push({ title: titleMatch[1].replace('<![CDATA[', '').replace(']]>', ''), link: linkMatch[1], source: 'CME Group News' });
+        }
+    }
+    return { source: "RSS Feeds", articles };
+  } catch (error) {
+    console.error("Error fetching social pulse:", error);
+    return { source: "RSS Feeds", articles: [], error: error.message };
+  }
+}
+
+// --- Main API Handler ---
+
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
-    res.status(405).send({ error: 'Method Not Allowed' });
-    return;
+    return res.status(405).send({ error: 'Method Not Allowed' });
   }
 
   await cors(req, res);
@@ -200,18 +204,44 @@ export default async function handler(req, res) {
       return;
     }
 
-    console.log('Cache miss. Fetching fresh data for agriculture module...');
+    console.log('Cache miss. Fetching fresh data for agriculture dashboard...');
 
-    const [siapData, cmeFutures, regionalNews] = await Promise.all([
-      getSIAPData(),
-      getCMEFutures(),
-      getRegionalNews()
+    const [
+      guanajuatoContext,
+      nationalBalance,
+      usdaGovData,
+      internationalMarkets,
+      logisticsData,
+      agroInputsData,
+      climateData,
+      socialPulse
+    ] = await Promise.all([
+      getGuanajuatoContext(),
+      getNationalBalance(),
+      getUSDAGovData(),
+      getInternationalMarkets(),
+      getLogisticsData(),
+      getAgroInputsData(),
+      getClimateData(),
+      getSocialPulse()
     ]);
 
     const responseData = {
-      siap_data: siapData,
-      cme_futures: cmeFutures,
-      regional_news: regionalNews,
+      dashboard_title: "Inteligencia de Mercados de Granos: Guanajuato",
+      last_updated: new Date().toISOString(),
+      data_sources: [
+        "Curated Local Data (SECAM)", "GCMA", "USDA FAS API", "Commodities-API", "Trading Economics API",
+        "MarineTraffic API", "SNIIM", "OpenWeatherMap API", "CME Group RSS"
+      ],
+      
+      local_context: guanajuatoContext,
+      national_balance: nationalBalance,
+      global_supply_demand: usdaGovData,
+      international_markets: internationalMarkets,
+      logistics: logisticsData,
+      agro_inputs_and_final_products: agroInputsData,
+      climate: climateData,
+      social_pulse: socialPulse,
     };
 
     await redis.set(CACHE_KEY_AGRICULTURE, JSON.stringify(responseData), {
@@ -222,6 +252,6 @@ export default async function handler(req, res) {
 
   } catch (error) {
     console.error('Error in agriculture handler:', error);
-    res.status(500).json({ error: 'Failed to fetch agriculture data' });
+    res.status(500).json({ error: 'Failed to fetch agriculture dashboard data', details: error.message });
   }
 }

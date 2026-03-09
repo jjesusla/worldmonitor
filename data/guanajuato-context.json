@@ -1,0 +1,24 @@
+{
+  "source": "SECAM / Asociaciones Locales (Curated from provided document)",
+  "last_curated_update": "2026-03-08",
+  "instructions": "This file contains curated local context for Guanajuato. Update these values based on new reports from SECAM, local news, and producer associations.",
+  "granoDelBajioProgram": {
+    "source": "Secretaría del Campo Gto (SECAM)",
+    "price_mxn_per_ton": 5000,
+    "state_support_mxn_per_ton": 150,
+    "federal_incentive_mxn_per_ton": 800,
+    "total_investment_mxn": 32000000,
+    "purchase_target_tonnes": 50000
+  },
+  "market_reference_prices": {
+    "livestock_feed_price_mxn_per_ton": 4800,
+    "open_market_white_corn_mxn_per_ton": 4900,
+    "open_market_yellow_corn_mxn_per_ton": 4100
+  },
+  "producer_stats": {
+    "source": "INEGI Censo Agropecuario",
+    "total_producers_inegi": 103767,
+    "vulnerable_temporal_lands_pct": 60,
+    "notes": "Many producers are unable to cover loan costs at current open market prices."
+  }
+}
