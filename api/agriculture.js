@@ -1,5 +1,6 @@
 import { cors } from './_cors';
 import { Redis } from '@upstash/redis';
+import { XMLParser } from 'fast-xml-parser';
 
 // --- Redis Cache Setup ---
 const redis = new Redis({
@@ -164,23 +165,19 @@ async function getClimateData() {
  */
 async function getSocialPulse() {
   console.log('Fetching social pulse...');
-  // Using a more relevant feed for market news
   const feedUrl = 'https://www.cmegroup.com/cme-group-en-feed.rss';
   try {
     const response = await fetch(feedUrl);
     const xmlText = await response.text();
-    const articles = [];
-    const items = xmlText.split('<item>');
-    items.shift(); 
-
-    for (let i = 0; i < Math.min(items.length, 4); i++) {
-        const item = items[i];
-        const titleMatch = item.match(/<title>(.*?)<\/title>/);
-        const linkMatch = item.match(/<link>(.*?)<\/link>/);
-        if (titleMatch && linkMatch) {
-            articles.push({ title: titleMatch[1].replace('<![CDATA[', '').replace(']]>', ''), link: linkMatch[1], source: 'CME Group News' });
-        }
-    }
+    const parser = new XMLParser({ ignoreAttributes: false, cdataPropName: '__cdata' });
+    const parsed = parser.parse(xmlText);
+    const rawItems = parsed?.rss?.channel?.item ?? [];
+    const itemArray = Array.isArray(rawItems) ? rawItems : [rawItems];
+    const articles = itemArray.slice(0, 4).map(item => ({
+      title: item.title?.__cdata ?? item.title ?? '',
+      link: item.link ?? '',
+      source: 'CME Group News',
+    })).filter(a => a.title && a.link);
     return { source: "RSS Feeds", articles };
   } catch (error) {
     console.error("Error fetching social pulse:", error);

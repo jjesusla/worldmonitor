@@ -20,20 +20,20 @@ Each entry includes severity, description, affected files, and dependencies on o
 Any change risks regressions elsewhere; HMR is fragile because the whole class must reload after every edit.
 
 **AI instructions**
-Split `App.ts` into focused controllers (e.g., `DataLoader`, `PanelManager`, `MapController`, `RefreshScheduler`, `DeepLinkHandler`), each in a separate file under `src/controllers/`.
+Split `App.ts` into focused controllers (e.g., `DataLoader`, `PanelLayout`, `RefreshScheduler`, `EventHandlers`), each in a separate file under `src/app/` (Phase 1 already done — see resolution progress below).
 Keep the `App` class as a thin composition root that wires controllers together.
 
 **Resolution progress**
 
-- **Phase 1 ** — All seven controllers created under `src/controllers/`:
-  - `app-context.ts` (169 lines) — `AppContext` interface: shared mutable state surface
-  - `refresh-scheduler.ts` (215 lines) — periodic refresh intervals, snapshot saving
-  - `deep-link-handler.ts` (192 lines) — URL state, deep linking, clipboard
-  - `desktop-updater.ts` (195 lines) — Tauri update checking, badge display
-  - `country-intel.ts` (535 lines) — country briefs, timeline, story, CII signals
-  - `ui-setup.ts` (937 lines) — event listeners, search/source modals, idle detection
-  - `data-loader.ts` (1 540 lines) — all data loading, news rendering, correlation
-  - `panel-manager.ts` (1 028 lines) — panel creation, layout, drag-and-drop, toggles
+- **Phase 1 ✅** — All controllers created under `src/app/` (not `src/controllers/`):
+  - `app-context.ts` — `AppContext` interface: shared mutable state surface
+  - `refresh-scheduler.ts` — periodic refresh intervals, snapshot saving
+  - `desktop-updater.ts` — Tauri update checking, badge display
+  - `country-intel.ts` — country briefs, timeline, story, CII signals
+  - `event-handlers.ts` — event listeners, idle detection (was `ui-setup.ts` in early drafts)
+  - `search-manager.ts` — search modal and source selection logic
+  - `data-loader.ts` (~1 540 lines) — all data loading, news rendering, correlation
+  - `panel-layout.ts` — panel creation, layout, drag-and-drop, toggles (was `panel-manager.ts` in early drafts)
   - `index.ts` — barrel export
   - **All files pass TypeScript strict-mode compilation with zero errors.**
 - **Phase 2 ⬜** — Refactor `App.ts` into thin composition root (~400–500 lines) that instantiates controllers and delegates. This phase must be done incrementally, method-by-method, to avoid regressions.

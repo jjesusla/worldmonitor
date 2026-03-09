@@ -1,7 +1,7 @@
 # World Monitor Agent Context File
 
 > Gives any AI agent enough context to continue development without reading the entire codebase.
-> Last updated: 2026-03-05 | Version: 2.5.25
+> Last updated: 2026-03-09 | Version: 2.5.25
 
 ---
 
@@ -29,7 +29,7 @@ Variant resolution: `localStorage('worldmonitor-variant')` -> `VITE_VARIANT` env
 | Frontend | TypeScript, Vite 6, no framework (vanilla class-based) |
 | Map 3D | globe.gl + Three.js |
 | Map flat | deck.gl + MapLibre GL JS |
-| API | 60+ Vercel edge functions (api/*.js, plain JS) |
+| API | 60+ Vercel edge functions (api/*.js plain JS + api/*/v1/[rpc].ts TypeScript domain pattern) |
 | Cache | Upstash Redis (server), IndexedDB + localStorage (client) |
 | Desktop | Tauri 2 (Rust) + Node.js sidecar on 127.0.0.1:46123 |
 | ML/AI | Web Worker + ONNX / Transformers.js; Ollama / Groq / OpenRouter |
@@ -62,7 +62,7 @@ worldmonitor/
       event-handlers.ts   # Event listeners, idle detection
       search-manager.ts
       index.ts
-    components/           # 44+ Panel class components
+    components/           # 73+ Panel class components (verified count: 73 files including MacroSignalsPanel.ts)
       Panel.ts            # Base class for all panels
       DeckGLMap.ts        # Flat map (156 KB -- BUG-020)
       GlobeMap.ts         # 3D globe
@@ -184,7 +184,7 @@ Full details: `docs/Docs_To_Review/bugs.md`
 | BUG-011 | Inconsistent idle timeout: 2 min in App.ts vs 5 min in stream panels. |
 | BUG-012 | GDELT Doc, FRED, Polymarket, Predictions not tracked in freshness system. |
 | BUG-013 | VITE_VARIANT=x scripts use Unix syntax — fail silently on Windows. Fix: use cross-env. |
-| BUG-014 | 52 of 55 API handlers have zero unit tests. |
+| BUG-014 | Most API handlers lack unit tests. tests/ has grown to 27+ test files; however agriculture.js and many v1/[rpc].ts domain handlers are still untested. |
 | BUG-015 | Workbox precaches ML JS chunk (~60 MB) even when browser ML is unused. |
 
 ### Low (open)
@@ -196,6 +196,7 @@ Full details: `docs/Docs_To_Review/bugs.md`
 | BUG-018 | i18n gaps — several components use hardcoded English strings. |
 | BUG-019 | E2E test scripts fail on Windows (same root cause as BUG-013). |
 | BUG-020 | DeckGLMap.ts at 156 KB — split into DeckGLLayers, DeckGLControls, DeckGLInteraction. |
+| BUG-021 | api/agriculture.js: no test file; RSS XML parsed via fragile regex (should use fast-xml-parser already in deps); many functions are placeholders returning hardcoded data; COMMODITIES_API_KEY undocumented; not registered in data-freshness.ts. |
 
 ---
 
@@ -264,8 +265,10 @@ npm run dev           # Full variant (worldmonitor.app)
 npm run dev:tech      # Tech variant
 npm run dev:finance   # Finance variant
 npm run build         # Production build
-npm test              # Unit tests (Node built-in runner)
-npm run test:e2e      # Playwright e2e tests
+npm run test:data     # Unit tests in tests/*.test.mjs (Node built-in runner — 27+ suites)
+npm run test:sidecar  # API handler tests (CORS, embed, regression, etc.)
+npm run test:feeds    # Validates RSS feed URLs
+npm run test:e2e      # Playwright e2e tests (all variants)
 npm run desktop:dev   # Tauri desktop dev with hot reload
 npm run desktop:build # Tauri production build
 ```
@@ -282,6 +285,7 @@ npm run desktop:build # Tauri production build
 | UPSTASH_REDIS_REST_TOKEN | Redis REST token |
 | GROQ_API_KEY | Groq LLM API key |
 | OPENROUTER_API_KEY | OpenRouter API key |
+| COMMODITIES_API_KEY | commodities-api.com key (used by api/agriculture.js; optional — falls back to placeholder data) |
 
 ---
 
@@ -319,6 +323,10 @@ npm run desktop:build # Tauri production build
 
 9. **i18n first-load boost** — on first load for non-English users, a one-time locale boost automatically enables native-language RSS feeds without overwriting manual preferences. This is intentional behavior; do not remove.
 
+10. **docs/Docs_To_Review/bugs.md drift** — BUG-001 in bugs.md incorrectly says controllers live under `src/controllers/`. The actual path is `src/app/`. File names also differ: `ui-setup.ts` → `event-handlers.ts`, `panel-manager.ts` → `panel-layout.ts`. bugs.md also omits `search-manager.ts` and references a `deep-link-handler.ts` that does not exist in `src/app/`. Trust this agents.md and the filesystem over bugs.md for controller paths.
+
+11. **api/agriculture.js is a domain-specific prototype** — Added for Guanajuato grain market intelligence. Most data functions are placeholders. Do not treat it as production-quality until TODO-004-style tests and real API connections are implemented (BUG-021).
+
 ---
 
 ## 12. External Data Sources
@@ -341,6 +349,9 @@ npm run desktop:build # Tauri production build
 | USGS | api/usgs.js | Earthquakes M4.5+ |
 | Oref | api/oref*.js | Israel rocket siren alerts |
 | AviationStack | api/aviationstack.js | Airport delays; routed via Railway relay |
+| Commodities-API | api/agriculture.js | Grain futures (CORN/WHEAT/SOYBEAN); requires COMMODITIES_API_KEY; falls back to placeholder |
+| SECAM/Local | api/agriculture.js + data/guanajuato-context.json | Curated local context for Guanajuato grain market; must be manually refreshed per SECAM bulletins |
+| USDA FAS | api/agriculture.js | US export/PSD data — placeholder implementation; no API key wired yet |
 
 ---
 
