@@ -167,6 +167,15 @@ export class PanelLayoutManager implements AppModule {
                title="Good News ${t('common.currentVariant')}">
               <span class="variant-icon">☀️</span>
               <span class="variant-label">Good News</span>
+            </a>` : ''}
+            ${SITE_VARIANT === 'agro' ? `<span class="variant-divider"></span>
+            <a href="${vHref('agro', 'https://agro.worldmonitor.app')}"
+               class="variant-option active"
+               data-variant="agro"
+               ${vTarget('agro')}
+               title="Agro Monitor ${t('common.currentVariant')}">
+              <span class="variant-icon">🌾</span>
+              <span class="variant-label">${t('header.agro')}</span>
             </a>` : ''}`;
       })()}</div>
           <span class="logo">MONITOR</span><span class="logo-mobile">World Monitor</span><span class="version">v${__APP_VERSION__}</span>${BETA_MODE ? '<span class="beta-badge">BETA</span>' : ''}
@@ -236,6 +245,7 @@ export class PanelLayoutManager implements AppModule {
           { key: 'finance', icon: '📈', label: t('header.finance') },
         ];
         if (SITE_VARIANT === 'happy') variants.push({ key: 'happy', icon: '☀️', label: 'Good News' });
+        if (SITE_VARIANT === 'agro') variants.push({ key: 'agro', icon: '🌾', label: t('header.agro') });
         return variants.map(v =>
           `<button class="mobile-menu-item mobile-menu-variant ${v.key === SITE_VARIANT ? 'active' : ''}" data-variant="${v.key}">
             <span class="mobile-menu-item-icon">${v.icon}</span>

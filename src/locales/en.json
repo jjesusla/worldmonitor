@@ -137,6 +137,7 @@
     "filterSources": "Filter sources...",
     "sourcesEnabled": "{{enabled}}/{{total}} enabled",
     "finance": "FINANCE",
+    "agro": "AGRO",
     "toggleTheme": "Toggle dark/light mode",
     "panelDisplayCaption": "Choose which panels to show on the dashboard",
     "tabGeneral": "General",
@@ -187,7 +188,10 @@
     "panelCatCentralBanks": "Central Banks & Econ",
     "panelCatDeals": "Deals & Institutional",
     "panelCatGulfMena": "Gulf & MENA",
-    "panelCatTradePolicy": "Trade Policy"
+    "panelCatTradePolicy": "Trade Policy",
+    "panelCatAgroData": "Crop & Market Data",
+    "panelCatAgroIntel": "Agro Intelligence",
+    "panelCatAgroMarkets": "Market Watch"
   },
   "panels": {
     "liveNews": "Live News",
